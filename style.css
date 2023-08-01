@@ -1,0 +1,82 @@
+body * {
+	box-sizing: border-box;
+}
+
+body {
+	padding: 2rem;
+}
+
+
+h1 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 2px 2px #F2A5A5;
+  text-align: center;
+  background-color: #F2A5A5;
+  padding: 5px;
+  border-radius: 20px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.4);
+}
+
+details {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+p {
+	font-size: small;
+}
+
+.container {
+	padding: 1em;
+}
+
+.input {
+  display: grid;
+  grid-template-columns: 7rem 7rem;
+}
+
+.label-value {
+  margin: 0.5em 1em;
+}
+
+.label-value label {
+  position: absolute;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+input {
+  display: block;
+  text-align: right;
+  padding-top: 20px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+  border: none;
+  border-bottom: solid 1px #f2a5a5;
+  outline: none;
+}
+
+.input input {
+  width: 5rem;
+}
+
+.recipe input {
+}
+
+hr {
+  border: none;
+  border-top: 5px dashed #FFB6C1;
+  height: 0;
+  margin: 20px 0;
+}
+
+span {
+  display: inline-block;
+  text-align: right;
+  width: 5rem;
+}
