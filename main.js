@@ -71,7 +71,7 @@ const vm = new Vue ({
     	Math.floor((data['弾薬']-4500)*0.005)+
     	Math.floor((data['鋼材']-5500)*0.004)+
     	Math.floor((data['ボーキ']-2200)*0.002)+
-    	Math.floor((data['開発資材']-50)*0.1);
+    	Math.floor((data['開発資材']-60)*0.2);
 
     	if(n[1] < 0) n[1] = 0;
 
@@ -87,7 +87,7 @@ const vm = new Vue ({
     	Math.floor((data['弾薬']-3000)*0.003)+
     	Math.floor((data['鋼材']-4000)*0.003)+
     	Math.floor((data['ボーキ']-1800)*0.002)+
-    	Math.floor((data['開発資材']-50)*0.1);
+    	Math.floor((data['開発資材']-40)*0.2);
 
     	if(n[2] < 0) n[2] = 0;
 
@@ -103,7 +103,7 @@ const vm = new Vue ({
     	Math.floor((data['弾薬']-2500)*0.003)+
     	Math.floor((data['鋼材']-3000)*0.002)+
     	Math.floor((data['ボーキ']-1500)*0.002)+
-    	Math.floor((data['開発資材']-50)*0.1);
+    	Math.floor((data['開発資材']-40)*0.2);
 
     	if(n[3] < 0) n[3] = 0;
 
