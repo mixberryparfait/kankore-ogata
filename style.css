@@ -7,7 +7,6 @@ body {
   font-size: 12px;
 }
 
-
 h1 {
   font-family: 'Roboto', sans-serif;
   font-size: 2rem;
@@ -84,16 +83,30 @@ span {
   width: 5em;
 }
 
-.output > div {
+.flex {
   display: flex;
 }
 
-.output > div > div:first-child {
-  width: 15em;
+.row {
+  display: flex;
+  width: 30em;
 }
 
-.output > div > div:last-child > span {
+.row > * {
+  margin: 0 1em;
+}
+
+.rate {
+  width: 5em;
+}
+
+.val {
   width: 2em;
+}
+
+#table_chart {
+  min-width: 25em;
+  min-height: 8em;
 }
 
 tbody {
