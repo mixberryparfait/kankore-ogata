@@ -47,6 +47,8 @@ const vm = new Vue ({
     calc: function () {
     	const data = this;
 
+      data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}`
+
       const n = [0,0,0,0]
       const r = [0,0,0,0]
 
