@@ -1,5 +1,6 @@
+
 window.onload = () => {
-	console.log('main.js');
+  console.log('main.js');
 
 const data = {
 	燃料: 1500,
@@ -8,7 +9,7 @@ const data = {
   ボーキ: 1000,
   開発資材: 1,
   空きドック: 3,
-  recipe: ''
+  recipe: '',
 };
 
 const entries = [97,99,95,91];
@@ -31,9 +32,7 @@ const vm = new Vue ({
   },
   methods: {
     inputs() {
-    	console.log('inputs');
       const values = this.recipe.split(/[^\d]+/);
-    	console.log(values);
       if(values.length >= 4) {
 	    	this['燃料'] = values[0] | 0
 	    	this['弾薬'] = values[1] | 0
@@ -48,71 +47,104 @@ const vm = new Vue ({
     calc: function () {
     	const data = this;
 
-    	let resource1 = 
+      const n = [0,0,0,0]
+      const r = [0,0,0,0]
+
+    	n[0] = 
     	Math.floor((data['燃料']-3000)*0.003)+
     	Math.floor((data['弾薬']-2000)*0.003)+
     	Math.floor((data['鋼材']-4000)*0.004)+
     	Math.floor((data['ボーキ']-5000)*0.005)+
     	Math.floor((data['開発資材']-50)*0.1);
 
-    	if(resource1 < 0) resource1 = 0;
+    	if(n[0] < 0) n[0] = 0;
 
-    	const r1 = 
+    	r[0] = 
       rate(data['燃料'], 2400, 3600) * 
       rate(data['弾薬'], 1050, 1950) * 
       rate(data['鋼材'], 2800, 4200) * 
       rate(data['ボーキ'], 2800, 5200);
 
 
-    	let resource2 =  
+    	n[1] =  
     	Math.floor((data['燃料']-3500)*0.003)+
     	Math.floor((data['弾薬']-4500)*0.005)+
     	Math.floor((data['鋼材']-5500)*0.004)+
     	Math.floor((data['ボーキ']-2200)*0.002)+
     	Math.floor((data['開発資材']-50)*0.1);
 
-    	if(resource2 < 0) resource2 = 0;
+    	if(n[1] < 0) n[1] = 0;
 
-    	const r2 = data['開発資材'] < 20 ? 0 : (1 - r1) * 
+    	r[1] = data['開発資材'] < 20 ? 0 : (1 - r[0]) * 
       rate(data['燃料'], 2240, 3360) * 
       rate(data['弾薬'], 2940, 5460) * 
       rate(data['鋼材'], 4400, 6600) * 
       rate(data['ボーキ'], 1050, 1950);
 
 
-    	let resource3 = 
+    	n[2] = 
     	Math.floor((data['燃料']-2500)*0.002)+
     	Math.floor((data['弾薬']-3000)*0.003)+
     	Math.floor((data['鋼材']-4000)*0.003)+
     	Math.floor((data['ボーキ']-1800)*0.002)+
     	Math.floor((data['開発資材']-50)*0.1);
 
-    	if(resource3 < 0) resource3 = 0;
+    	if(n[2] < 0) n[2] = 0;
 
-    	const r3 = (1 - r1 - r2) * 
+    	r[2] = (1 - r[0] - r[1]) * 
       rate(data['燃料'], 1920, 2880) * 
       rate(data['弾薬'], 2240, 4160) * 
       rate(data['鋼材'], 3040, 4560) * 
       rate(data['ボーキ'], 910, 1690);
 
 
-    	let resource4 = 
+    	n[3] = 
     	Math.floor((data['燃料']-2000)*0.002)+
     	Math.floor((data['弾薬']-2500)*0.003)+
     	Math.floor((data['鋼材']-3000)*0.002)+
     	Math.floor((data['ボーキ']-1500)*0.002)+
     	Math.floor((data['開発資材']-50)*0.1);
 
-    	if(resource4 < 0) resource4 = 0;
+    	if(n[3] < 0) n[3] = 0;
 
-    	const r4 = 1 - r1 - r2 - r3;
+    	r[3] = 1 - r[0] - r[1] - r[2];
+
+      /////////////////////
+
+      // m: エントリ　n: 資源定数  i:エントリINDEX
+      const hits = (m, n, i) => {
+        if(i == 0) return n;
+        if(i <= n) return 2 * n - i + 1;
+        if(i >= m - n) return m - i;
+        return n + 1;
+      }
+
+      const results = {}
+
+      // r: テーブル率
+      const count_ships = (m, n, r, t) => {
+        const sum = m * (n + 1);
+        for(let i = 0; i < m; i++) {
+          //console.log(m + ' ' + n + ' ' + i + ' ' + hits(m,n,i))
+          if(results[t[i]])
+            results[t[i]] += hits(m,n,i) * r / sum;
+          else
+            results[t[i]] = hits(m,n,i) * r / sum;
+        }
+      }
+
+      for(let t = 0; t < 4; t++) {
+        if(r[t] > 0)
+          count_ships(entries[data['空きドック']], n[t], r[t], table_data[t])
+      }
 
     	return [
-    		[Math.round(r1 * 100), resource1],
-    		[Math.round(r2 * 100), resource2],
-    		[Math.round(r3 * 100), resource3],
-    		[Math.round(r4 * 100), resource4],
-    		entries[data['空きドック']]
+    		[(r[0] * 100).toFixed(2), n[0]],
+    		[(r[1] * 100).toFixed(2), n[1]],
+    		[(r[2] * 100).toFixed(2), n[2]],
+    		[(r[3] * 100).toFixed(2), n[3]],
+    		entries[data['空きドック']],
+        Object.entries(results).map(e => {e[1] = (e[1] * 100).toFixed(2) + ' %'; return e;})
     	];
     }
   }

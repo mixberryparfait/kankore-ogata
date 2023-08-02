@@ -5,16 +5,19 @@
   	<link rel="stylesheet" href="style.css" type="text/css">
 
   	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  	<script src="data.js"></script>
   	<script src="main.js"></script>
 	</head>
 	<body>
 		<h1>艦これ　大型建造確率計算</h1>
 
-		<details>
-			<summary>説明を表示</summary>
 			<p><a href="https://fen-kure.hatenablog.com/entry/2017/09/13/063314">【艦これ】大鳳・Saratoga建造のための資源配分について</a><br>
-			を参考に各テーブル分岐率と資源定数（折返しエントリ数）を計算します</p>
-		</details>
+				の計算式と<br>
+			<a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/mst_createship_large.xml">https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/</a><br>
+			のテーブルデータをお借りして建造率を計算します</p>
+
+		<p><strong><a href="https://twitter.com/KanColle_STAFF/status/1525067471786758144">大和建造率上昇</a> 等テーブル自体が変わってるのと<br>
+		計算式自体もブラウザ版の実測とかなりずれているので注意</strong></p>
 
 		<hr>
 
@@ -32,12 +35,34 @@
 			</div>
 	    <hr>
 	    <div class="output">
-		    <div>太鳳テーブル:<span>{{calc[0][0]}} %</span> 資源定数: <span>{{calc[0][1]}}</span></div>
-		    <div>武蔵テーブル:<span>{{calc[1][0]}} %</span> 資源定数: <span>{{calc[1][1]}}</span></div>
-		    <div>大和テーブル:<span>{{calc[2][0]}} %</span> 資源定数: <span>{{calc[2][1]}}</span></div>
-		    <div>最低テーブル:<span>{{calc[3][0]}} %</span> 資源定数: <span>{{calc[3][1]}}</span></div>
+		    <div>
+		    	<div>太鳳テーブル:<span>{{calc[0][0]}} %</span></div>
+		    	<div>資源定数: <span>{{calc[0][1]}}</span></div>
+		    </div>
+		    <div>
+		      <div>武蔵テーブル:<span>{{calc[1][0]}} %</span></div>
+		      <div>資源定数: <span>{{calc[1][1]}}</span></div>
+		    </div>
+		    <div>
+		    <div>大和テーブル:<span>{{calc[2][0]}} %</span></div>
+		      <div>資源定数: <span>{{calc[2][1]}}</span></div>
+		      </div>
+		    <div>
+		      <div>最低テーブル:<span>{{calc[3][0]}} %</span></div>
+		      <div>資源定数: <span>{{calc[3][1]}}</span></div>
+		    </div>
 		    <div>エントリ数 {{calc[4]}}</div>
 	    </div>
+
+	    <hr>
+
+		  <table>
+		  	<tbody>
+			    <tr v-for="(row, rowIndex) in calc[5]" :key="rowIndex">
+			      <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
+			    </tr>
+			  </tbody>
+		  </table>
 	  </div>
 
 	</body>
