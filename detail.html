@@ -1,0 +1,221 @@
+<html>
+  <head>
+    <title>大型建造仕様</title>
+
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+  </head>
+  <body>
+      <h1>大型建造仕様</h1>
+
+      <p><strong><a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/Program.cs">このリポジトリのソースコード</a>に基づいた解説なので必ずしも正しい保証はありません<br>
+       (コードの解読が間違ってたらごめんなさい)<br>
+      特にテーブルエントリに関しては確実に変更されています</strong></p>
+
+      <p>大型建造も　通常建造　開発　と同じく　テーブル決定　⇒　テーブル内のエントリ決定　の２フェーズになってます</p>
+
+      <hr>
+
+      <h2> テーブル決定 </h2>
+      
+      <ul>
+	      <li>各資源 2400/1050/2800/2800 を超えると 空母テーブルに入り始めて <em>3600/1950/4200/5200 を超えると空母テーブル確定</em></li>
+	      <li>空母テーブルに入らなかった場合<br>
+	      各資源 2240/2940/4400/1050/20 を超えると 武蔵テーブルに入り始めて <em>3360/5460/6600/1950/20 を超えると武蔵テーブル確定</em></li>
+	      <li>武蔵テーブルにも入らなかった場合<br>
+	      各資源 1920/2240/3040/910 を超えると 大和テーブルに入り始めて <em>2880/4160/4560/1690 を超えると大和テーブル確定</em></li>
+	      <li>以上どこにも入らなければ最低値テーブル</li>
+	    </ul>
+
+      <p><em>基本的には乱数にしてもメリットがないので入りたいテーブル確定分以上資源を盛る<br>
+      	戦艦テーブルに入りたい場合はボーキを空母テーブル以下に<br>
+        大和テーブルに入りたい場合は開発資材を 1 にするだけで調整できます</em></p>
+
+      <hr>
+
+      <h2>エントリ決定</h2>
+      <p>空きドック依存の始点乱数 => 資源定数依存の乱数分巻戻った位置のエントリ一を選ぶ</p>
+
+      <h3> 始点乱数 </h3>
+      <div class="flex">
+      <div>
+        <p>空きドック 0 - 3 に応じて始点が以下の範囲から一様乱数で選ばれる</p>
+        <ul>
+        	<li>空き 0: 3 ～ 99</li>
+        	<li>空き 1: 1 ～ 99</li>
+        	<li>空き 2: 1 ～ 95</li>
+        	<li>空き 3: 1 ～ 91</li>
+        </ul>
+        <p>空きドックが多いほど前半から始まりやすい</p>
+      </div>
+      <img src="img/emptydock.jpg">
+      </div>
+
+      <hr>
+
+      <h3> 巻き戻り乱数 </h3>
+      <div class="flex">
+        <div>
+          <p>始点位置から 0 ～ 資源定数(後述) の乱数分巻戻る (資源定数分確定でま戻るわけではない) </p>
+          <p>(例)始点 50 で資源定数 10 の場合 0～-9 されて 41～50 からランダムで選ばれる</p>
+        </div>
+	      <img src="img/entry1.jpg">	
+      </div>
+      <div class="flex">
+        <div>
+  	      <p>エントリが 0 以下になった場合 2 から再びおりかえす<br>
+          なので 0 番エントリにあたることは絶対にない？？？</p>
+          <p>(例)始点 10 で資源定数 15 の場合<br>
+            0～-14 巻き戻されて -4 ～ 10 が選ばれる<br>
+            0 ～ -4 の5個にあったときは 2～6 に置き換わる</p>
+          <p><em>資源定数が大きいほど前半のエントリが当たりやすくなる</em></p>
+        </div>
+        <img src="img/entry2.jpg">
+      </div>
+
+      <h3>資源定数</h3>
+      <ul>
+        <li>空母テーブル<br>
+          <code>
+        	(燃料 - 3000) * 0.003 + (弾薬 - 2000) * 0.003 + (鋼材 - 4000) * 0.004 + (ボーキ - 5000) * 0.005 + (開発資材 - 50) * 0.1
+          </code>
+          <p>資源定数 +1 するのに 燃料 333, 弾薬 333, 鋼材 250, ボーキ 200, 開発資材 10</p>
+        </li>
+
+        <li>武蔵テーブル<br>
+          <code>
+        	(燃料 - 3500) * 0.003 + (弾薬 - 4500) * 0.005 + (鋼材 - 5500) * 0.004 + (ボーキ - 2200) * 0.002 + (開発資材 - 60) * 0.2
+          </code>
+          <p>資源定数 +1 するのに 燃料 333, 弾薬 200, 鋼材 250, ボーキ 500, 開発資材 5</p>
+        </li>
+
+        <li>大和テーブル<br>
+          <code>
+        	(燃料 - 2500) * 0.002 + (弾薬 - 3000) * 0.003 + (鋼材 - 4000) * 0.003 + (ボーキ - 1800) * 0.002 + (開発資材 - 40) * 0.2
+          </code>
+          <p>資源定数 +1 するのに 燃料 500, 弾薬 333, 鋼材 333, ボーキ 500, 開発資材 5</p>
+        </li>
+
+        <li>その他テーブル<br>
+          <code>
+        	(燃料 - 2000) * 0.002 + (弾薬 - 2500) * 0.003 + (鋼材 - 3000) * 0.002 + (ボーキ - 1500) * 0.002 + (開発資材 - 40) * 0.2
+          </code>
+          <p>資源定数 +1 するのに 燃料 500, 弾薬 333, 鋼材 500, ボーキ 500, 開発資材 5</p>
+        </li>
+      </ul>
+
+      <p><em>テーブル確定最低値より集めやすさと係数に応じてある程度資源定数（巻き戻り数）をふやして前半に偏らせた方が効率がいい</em><br>
+        開発資材の価値は他の資源 数十程度
+      </p>
+
+      <hr>
+
+      <p>以下は艦これ改のテーブルらしいですがブラウザ版は大和確率上昇等何度か変更があったので確実に違ってます<br>
+         ただエントリを前半に偏らせることが重要なのはなんとなく体感できると思います</p>
+
+      <table><tbody>
+<tr><th>エントリ</th><th>空母テーブル</th><th>武蔵テーブル</th><th>大和テーブル</th><th>最低値テーブル</th></tr>
+<tr><td>0</td><td><b>大鳳</b></td><td><b>大和</b></td><td><b>大和</b></td><td><b>矢矧</b></td></tr>
+<tr><td>1</td><td><b>大鳳</b></td><td><b>大和</b></td><td>あきつ丸</td><td><b>矢矧</b></td></tr>
+<tr><td>2</td><td>あきつ丸</td><td><b>武蔵</b></td><td><b>大和</b></td><td><b>矢矧</b></td></tr>
+<tr><td>3</td><td><b>大鳳</b></td><td><b>武蔵</b></td><td>あきつ丸</td><td>阿賀野</td></tr>
+<tr><td>4</td><td>あきつ丸</td><td>長門</td><td><b>大和</b></td><td>阿賀野</td></tr>
+<tr><td>5</td><td><b>大鳳</b></td><td>長門</td><td>長門</td><td>三隈</td></tr>
+<tr><td>6</td><td>瑞鶴</td><td>陸奥</td><td>陸奥</td><td>能代</td></tr>
+<tr><td>7</td><td>翔鶴</td><td>陸奥</td><td>伊401</td><td>長門</td></tr>
+<tr><td>8</td><td>瑞鶴</td><td>陸奥</td><td><b>矢矧</b></td><td>長門</td></tr>
+<tr><td>9</td><td>翔鶴</td><td>伊勢</td><td><b>矢矧</b></td><td>陸奥</td></tr>
+<tr><td>10</td><td>赤城</td><td><b>大和</b></td><td>阿賀野</td><td>陸奥</td></tr>
+<tr><td>11</td><td>加賀</td><td><b>武蔵</b></td><td>阿賀野</td><td><b>まるゆ</b></td></tr>
+<tr><td>12</td><td>蒼龍</td><td>日向</td><td>能代</td><td>阿賀野</td></tr>
+<tr><td>13</td><td>飛龍</td><td><b>武蔵</b></td><td>伊401</td><td><b>まるゆ</b></td></tr>
+<tr><td>14</td><td>あきつ丸</td><td>金剛</td><td>伊勢</td><td>能代</td></tr>
+<tr><td>15</td><td>あきつ丸</td><td>金剛</td><td>伊401</td><td><b>まるゆ</b></td></tr>
+<tr><td>16</td><td><b>まるゆ</b></td><td>比叡</td><td>伊401</td><td>三隈</td></tr>
+<tr><td>17</td><td>翔鶴</td><td>比叡</td><td>日向</td><td><b>まるゆ</b></td></tr>
+<tr><td>18</td><td>瑞鶴</td><td>比叡</td><td>金剛</td><td>金剛</td></tr>
+<tr><td>19</td><td><b>まるゆ</b></td><td>榛名</td><td>金剛</td><td>金剛</td></tr>
+<tr><td>20</td><td>赤城</td><td>榛名</td><td>金剛</td><td>金剛</td></tr>
+<tr><td>21</td><td>あきつ丸</td><td>榛名</td><td>比叡</td><td>比叡</td></tr>
+<tr><td>22</td><td>加賀</td><td>霧島</td><td>比叡</td><td>比叡</td></tr>
+<tr><td>23</td><td>加賀</td><td>霧島</td><td>比叡</td><td>比叡</td></tr>
+<tr><td>24</td><td>加賀</td><td>霧島</td><td>榛名</td><td>榛名</td></tr>
+<tr><td>25</td><td>蒼龍</td><td>扶桑</td><td>榛名</td><td>榛名</td></tr>
+<tr><td>26</td><td>蒼龍</td><td>山城</td><td>榛名</td><td>榛名</td></tr>
+<tr><td>27</td><td>瑞鳳</td><td><b>大和</b></td><td>霧島</td><td>霧島</td></tr>
+<tr><td>28</td><td>飛龍</td><td><b>武蔵</b></td><td>霧島</td><td>霧島</td></tr>
+<tr><td>29</td><td>飛龍</td><td>長門</td><td>霧島</td><td>霧島</td></tr>
+<tr><td>30</td><td><b>まるゆ</b></td><td><b>まるゆ</b></td><td>扶桑</td><td>扶桑</td></tr>
+<tr><td>31</td><td>翔鶴</td><td>陸奥</td><td>長門</td><td>阿賀野</td></tr>
+<tr><td>32</td><td>飛龍</td><td>陸奥</td><td>陸奥</td><td>能代</td></tr>
+<tr><td>33</td><td><b>まるゆ</b></td><td>伊勢</td><td>山城</td><td>山城</td></tr>
+<tr><td>34</td><td>飛鷹</td><td>伊勢</td><td><b>まるゆ</b></td><td><b>まるゆ</b></td></tr>
+<tr><td>35</td><td>飛鷹</td><td>日向</td><td>長門</td><td>陸奥</td></tr>
+<tr><td>36</td><td>隼鷹</td><td>日向</td><td>陸奥</td><td><b>まるゆ</b></td></tr>
+<tr><td>37</td><td>隼鷹</td><td>金剛</td><td>伊勢</td><td>金剛</td></tr>
+<tr><td>38</td><td><b>まるゆ</b></td><td>金剛</td><td>日向</td><td><b>まるゆ</b></td></tr>
+<tr><td>39</td><td>赤城</td><td>金剛</td><td>扶桑</td><td>比叡</td></tr>
+<tr><td>40</td><td>加賀</td><td>比叡</td><td>山城</td><td><b>まるゆ</b></td></tr>
+<tr><td>41</td><td>蒼龍</td><td>比叡</td><td>金剛</td><td>榛名</td></tr>
+<tr><td>42</td><td>飛龍</td><td>比叡</td><td>比叡</td><td><b>まるゆ</b></td></tr>
+<tr><td>43</td><td>あきつ丸</td><td>榛名</td><td>榛名</td><td>霧島</td></tr>
+<tr><td>44</td><td><b>大鳳</b></td><td>榛名</td><td>霧島</td><td><b>まるゆ</b></td></tr>
+<tr><td>45</td><td>翔鶴</td><td>榛名</td><td>あきつ丸</td><td>鈴谷</td></tr>
+<tr><td>46</td><td>瑞鶴</td><td>霧島</td><td>あきつ丸</td><td>熊野</td></tr>
+<tr><td>47</td><td>飛鷹</td><td>霧島</td><td>伊401</td><td><b>まるゆ</b></td></tr>
+<tr><td>48</td><td>隼鷹</td><td>霧島</td><td><b>まるゆ</b></td><td>能代</td></tr>
+<tr><td>49</td><td><b>まるゆ</b></td><td>あきつ丸</td><td>金剛</td><td>陸奥</td></tr>
+<tr><td>50</td><td>飛鷹</td><td>あきつ丸</td><td><b>まるゆ</b></td><td>香取</td></tr>
+<tr><td>51</td><td>隼鷹</td><td>扶桑</td><td>比叡</td><td>伊勢</td></tr>
+<tr><td>52</td><td>龍驤</td><td>山城</td><td><b>まるゆ</b></td><td>日向</td></tr>
+<tr><td>53</td><td><b>大鳳</b></td><td>長門</td><td>榛名</td><td><b>まるゆ</b></td></tr>
+<tr><td>54</td><td>加賀</td><td>陸奥</td><td><b>まるゆ</b></td><td>鈴谷</td></tr>
+<tr><td>55</td><td>蒼龍</td><td>陸奥</td><td>霧島</td><td>熊野</td></tr>
+<tr><td>56</td><td>飛龍</td><td>伊勢</td><td><b>まるゆ</b></td><td>扶桑</td></tr>
+<tr><td>57</td><td>祥鳳</td><td>伊勢</td><td>阿賀野</td><td>扶桑</td></tr>
+<tr><td>58</td><td>飛鷹</td><td>日向</td><td>阿賀野</td><td>山城</td></tr>
+<tr><td>59</td><td>隼鷹</td><td>日向</td><td>能代</td><td>山城</td></tr>
+<tr><td>60</td><td>龍驤</td><td><b>まるゆ</b></td><td>能代</td><td>鈴谷</td></tr>
+<tr><td>61</td><td>加賀</td><td>金剛</td><td><b>まるゆ</b></td><td>熊野</td></tr>
+<tr><td>62</td><td>加賀</td><td><b>まるゆ</b></td><td>鈴谷</td><td>長門</td></tr>
+<tr><td>63</td><td>蒼龍</td><td>比叡</td><td>熊野</td><td>陸奥</td></tr>
+<tr><td>64</td><td>蒼龍</td><td><b>まるゆ</b></td><td><b>まるゆ</b></td><td>伊勢</td></tr>
+<tr><td>65</td><td><b>まるゆ</b></td><td>榛名</td><td>鈴谷</td><td>日向</td></tr>
+<tr><td>66</td><td>飛鷹</td><td><b>まるゆ</b></td><td>熊野</td><td>扶桑</td></tr>
+<tr><td>67</td><td>飛鷹</td><td>霧島</td><td>あきつ丸</td><td>山城</td></tr>
+<tr><td>68</td><td>隼鷹</td><td>扶桑</td><td>扶桑</td><td>陸奥</td></tr>
+<tr><td>69</td><td>隼鷹</td><td>扶桑</td><td>阿賀野</td><td>金剛</td></tr>
+<tr><td>70</td><td>あきつ丸</td><td>山城</td><td>能代</td><td>比叡</td></tr>
+<tr><td>71</td><td>祥鳳</td><td>山城</td><td>山城</td><td>榛名</td></tr>
+<tr><td>72</td><td>飛鷹</td><td>陸奥</td><td>陸奥</td><td>霧島</td></tr>
+<tr><td>73</td><td>隼鷹</td><td>伊勢</td><td>伊勢</td><td><b>まるゆ</b></td></tr>
+<tr><td>74</td><td>龍驤</td><td>日向</td><td>日向</td><td>香取</td></tr>
+<tr><td>75</td><td>赤城</td><td>扶桑</td><td>扶桑</td><td>香取</td></tr>
+<tr><td>76</td><td>加賀</td><td>山城</td><td>山城</td><td><b>まるゆ</b></td></tr>
+<tr><td>77</td><td>蒼龍</td><td>金剛</td><td>金剛</td><td>伊勢</td></tr>
+<tr><td>78</td><td>飛龍</td><td>比叡</td><td>比叡</td><td>日向</td></tr>
+<tr><td>79</td><td><b>まるゆ</b></td><td>榛名</td><td>榛名</td><td>扶桑</td></tr>
+<tr><td>80</td><td>飛鷹</td><td>霧島</td><td>霧島</td><td>山城</td></tr>
+<tr><td>81</td><td>飛鷹</td><td>陸奥</td><td>陸奥</td><td>利根</td></tr>
+<tr><td>82</td><td>隼鷹</td><td>伊勢</td><td>伊勢</td><td>筑摩</td></tr>
+<tr><td>83</td><td>隼鷹</td><td>日向</td><td>日向</td><td>最上</td></tr>
+<tr><td>84</td><td><b>まるゆ</b></td><td>扶桑</td><td>扶桑</td><td>伊勢</td></tr>
+<tr><td>85</td><td>加賀</td><td>山城</td><td>山城</td><td>日向</td></tr>
+<tr><td>86</td><td>加賀</td><td>金剛</td><td>金剛</td><td>扶桑</td></tr>
+<tr><td>87</td><td>蒼龍</td><td>比叡</td><td>比叡</td><td>山城</td></tr>
+<tr><td>88</td><td>蒼龍</td><td>榛名</td><td>榛名</td><td>利根</td></tr>
+<tr><td>89</td><td><b>まるゆ</b></td><td>霧島</td><td>霧島</td><td>筑摩</td></tr>
+<tr><td>90</td><td>祥鳳</td><td>扶桑</td><td>扶桑</td><td>伊勢</td></tr>
+<tr><td>91</td><td>飛鷹</td><td>扶桑</td><td>扶桑</td><td>日向</td></tr>
+<tr><td>92</td><td>隼鷹</td><td>山城</td><td>山城</td><td>扶桑</td></tr>
+<tr><td>93</td><td>龍驤</td><td>山城</td><td>山城</td><td>山城</td></tr>
+<tr><td>94</td><td><b>まるゆ</b></td><td>伊勢</td><td>伊勢</td><td>最上</td></tr>
+<tr><td>95</td><td>祥鳳</td><td>日向</td><td>日向</td><td>金剛</td></tr>
+<tr><td>96</td><td>飛鷹</td><td>扶桑</td><td>扶桑</td><td>比叡</td></tr>
+<tr><td>97</td><td>隼鷹</td><td>扶桑</td><td>扶桑</td><td>榛名</td></tr>
+<tr><td>98</td><td>龍驤</td><td>山城</td><td>山城</td><td>霧島</td></tr>
+<tr><td>99</td><td><b>まるゆ</b></td><td>山城</td><td>山城</td><td><b>まるゆ</b></td></tr>
+    </tbody></table>  
+
+  </body>
+</html>

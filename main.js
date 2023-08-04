@@ -12,124 +12,131 @@ const data = {
   recipe: '',
 };
 
-
-
-const entries = [97,99,95,91];
-
 const rate = (x, lower, upper) => {
   if (x >= upper) {
     return 1;
   } else if (x <= lower) {
     return 0;
   } else {
-    return (x - lower) / (upper - lower);
+    return (x - lower + 1) / (upper - lower); // 下限値から確率発生
   }
 }
 
 
 const calc = () => {
 
+  // レシピセット
+
   data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}`
 
-  const n = [0,0,0,0]
-  const r = [0,0,0,0]
+  // テーブル確率
 
-  n[0] = 
-  Math.floor((data['燃料']-3000)*0.003)+
-  Math.floor((data['弾薬']-2000)*0.003)+
-  Math.floor((data['鋼材']-4000)*0.004)+
-  Math.floor((data['ボーキ']-5000)*0.005)+
-  Math.floor((data['開発資材']-50)*0.1);
+  const table_rate = [0,0,0,0];
 
-  if(n[0] < 0) n[0] = 0;
-
-  r[0] = 
+  table_rate[0] = 
   rate(data['燃料'], 2400, 3600) * 
   rate(data['弾薬'], 1050, 1950) * 
   rate(data['鋼材'], 2800, 4200) * 
   rate(data['ボーキ'], 2800, 5200);
 
-
-  n[1] =  
-  Math.floor((data['燃料']-3500)*0.003)+
-  Math.floor((data['弾薬']-4500)*0.005)+
-  Math.floor((data['鋼材']-5500)*0.004)+
-  Math.floor((data['ボーキ']-2200)*0.002)+
-  Math.floor((data['開発資材']-60)*0.2);
-
-  if(n[1] < 0) n[1] = 0;
-
-  r[1] = data['開発資材'] < 20 ? 0 : (1 - r[0]) * 
+  table_rate[1] = data['開発資材'] < 20 ? 0 : (1 - table_rate[0]) * 
   rate(data['燃料'], 2240, 3360) * 
   rate(data['弾薬'], 2940, 5460) * 
   rate(data['鋼材'], 4400, 6600) * 
   rate(data['ボーキ'], 1050, 1950);
 
-
-  n[2] = 
-  Math.floor((data['燃料']-2500)*0.002)+
-  Math.floor((data['弾薬']-3000)*0.003)+
-  Math.floor((data['鋼材']-4000)*0.003)+
-  Math.floor((data['ボーキ']-1800)*0.002)+
-  Math.floor((data['開発資材']-40)*0.2);
-
-  if(n[2] < 0) n[2] = 0;
-
-  r[2] = (1 - r[0] - r[1]) * 
+  table_rate[2] = (1 - table_rate[0] - table_rate[1]) * 
   rate(data['燃料'], 1920, 2880) * 
   rate(data['弾薬'], 2240, 4160) * 
   rate(data['鋼材'], 3040, 4560) * 
   rate(data['ボーキ'], 910, 1690);
 
+  table_rate[3] = 1 - table_rate[0] - table_rate[1] - table_rate[2];
 
-  n[3] = 
-  Math.floor((data['燃料']-2000)*0.002)+
-  Math.floor((data['弾薬']-2500)*0.003)+
-  Math.floor((data['鋼材']-3000)*0.002)+
-  Math.floor((data['ボーキ']-1500)*0.002)+
-  Math.floor((data['開発資材']-40)*0.2);
+  displayChart(table_rate);
 
-  if(n[3] < 0) n[3] = 0;
+  //　資源定数
 
-  r[3] = 1 - r[0] - r[1] - r[2];
+  const resource_factors = [
+    [ // group_id == 1
+      [3000, 0.003], // fuel
+      [2000, 0.003], // bull
+      [4000, 0.004], // steel
+      [5000, 0.005], // bauxite
+      [50, 0.1]      // devkit
+    ],
+    [ // group_id == 2
+      [3500, 0.003], // fuel
+      [4500, 0.005], // bull
+      [5500, 0.004], // steel
+      [2200, 0.002], // bauxite
+      [60, 0.2]      // devkit
+    ],
+    [ // group_id == 3
+      [2500, 0.002], // fuel
+      [3000, 0.003], // bull
+      [4000, 0.003], // steel
+      [1800, 0.002], // bauxite
+      [40, 0.2]      // devkit
+    ],
+    [ // group_id == 4
+      [2000, 0.002], // fuel
+      [2500, 0.003], // bull
+      [3000, 0.002], // steel
+      [1500, 0.002], // bauxite
+      [40, 0.2]      // devkit
+    ]
+  ];
 
-  displayChart(r);
+  const ranges = [
+    [3,100],
+    [1,100],
+    [1,96],
+    [1,92]
+  ];
 
-  /////////////////////////////////////////
+  const skips = [0,0,0,0];
 
-  // m: エントリ　n: 資源定数  i:エントリINDEX
-  const hits = (m, n, i) => {
-    if(i == 0) return n;
-    if(i <= n) return 2 * n - i + 1;
-    if(i >= m - n) return m - i;
-    return n + 1;
-  }
+  const results = {};
 
-  const results = {}
+  for(let t = 0; t < 4; t++) {
+    if(table_rate[t] <= 0) continue;
 
-  // r: テーブル率
-  const count_ships = (m, n, r, t) => {
-    const sum = m * (n + 1);
-    for(let i = 0; i < m; i++) {
-      //console.log(m + ' ' + n + ' ' + i + ' ' + hits(m,n,i))
-      if(results[t[i]])
-        results[t[i]] += hits(m,n,i) * r / sum;
-      else
-        results[t[i]] = hits(m,n,i) * r / sum;
+    // 資源定数
+
+    let num8 = 0;
+    ['燃料', '弾薬', '鋼材', 'ボーキ', '開発資材'].forEach((e, i) => {
+      num8 += Math.floor((data[e] - resource_factors[t][i][0]) * resource_factors[t][i][1]);
+    });
+    if(num8 < 0) num8 = 0;
+    skips[t] = num8;
+    if(num8 <= 0) num8 = 1;
+
+    //////////
+
+    const range = ranges[data['空きドック']];
+    const entry_count = range[1] - range[0] - 1;
+
+    for(let num2 = range[0]; num2 < range[1]; num2++) {
+      for(let i = 0; i < num8; i++) {
+        const num9 = i > 50 ? 50 : i;
+        let num10 = num2 - num9;
+        if (num10 < 1) {
+            num10 = 2 - num10;
+        }
+        const ship = table_data[t][num10];
+        if(!results[ship]) results[ship] = 0;
+        results[ship] += table_rate[t] / entry_count / num8;
+      }
     }
   }
 
-  for(let t = 0; t < 4; t++) {
-    if(r[t] > 0)
-      count_ships(entries[data['空きドック']], n[t], r[t], table_data[t])
-  }
-
   return [
-    [(r[0] * 100).toFixed(2), n[0]],
-    [(r[1] * 100).toFixed(2), n[1]],
-    [(r[2] * 100).toFixed(2), n[2]],
-    [(r[3] * 100).toFixed(2), n[3]],
-    entries[data['空きドック']],
+    [(table_rate[0] * 100).toFixed(2), skips[0]],
+    [(table_rate[1] * 100).toFixed(2), skips[1]],
+    [(table_rate[2] * 100).toFixed(2), skips[2]],
+    [(table_rate[3] * 100).toFixed(2), skips[3]],
+    ranges[data['空きドック']],
     Object.entries(results).map(e => {e[1] = (e[1] * 100).toFixed(2) + ' %'; return e;})
   ];
 }
@@ -189,4 +196,48 @@ const vm = new Vue ({
 });
 
 
+};
+
+
+///////////////////////////////////////////
+
+option = {
+  legend: {
+    data: ['Expenses', 'Income']
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    data: (function () {
+      let list = [];
+      for (let i = 0; i <= 3; i++) {
+        list.push(i);
+      }
+      return list;
+    })()
+  },
+  series: [
+    {
+      name: 'Placeholder',
+      type: 'bar',
+      stack: 'Total',
+      silent: true,
+      itemStyle: {
+        borderColor: 'transparent',
+        color: 'transparent'
+      },
+      emphasis: {
+        itemStyle: {
+          borderColor: 'transparent',
+          color: 'transparent'
+        }
+      },
+      data: [0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292]
+    },
+  ]
 };

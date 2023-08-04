@@ -5,6 +5,7 @@ body * {
 body {
 	padding: 2em;
   font-size: 12px;
+  color: #444;
 }
 
 h1 {
@@ -20,7 +21,6 @@ h1 {
 }
 
 strong {
-  text-decoration: underline;
   color: #e40;
 }
 
@@ -49,9 +49,10 @@ p {
   text-align: left;
 }
 
-input {
+input, select {
   display: block;
   text-align: right;
+  padding: 0 1em;
   padding-top: 20px;
   font-size: 16px;
   color: #333;
@@ -63,7 +64,7 @@ input {
 }
 
 .input input {
-  width: 5em;
+  width: 6em;
 }
 
 .recipe input {
@@ -110,17 +111,53 @@ span {
 }
 
 tbody {
-  display: flex;
-  flex-wrap: wrap;
   font-size: 12px;
 }
 
-tr {
+.result tbody {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.result tr {
   display: grid;
   grid-template-columns: 4.5em 4.5em;
   width: 15em;
 }
 
-tr > td:last-child {
+.result tr > td:last-child {
   text-align: right;
+}
+
+/**************************/
+
+li {
+  margin: 0.5em;
+}
+
+em {
+  color: #c00;
+}
+
+img {
+  margin-left: 1em;
+}
+
+code {
+  display: block;
+  margin-top: 1em;
+  padding: 0.5em;
+  color: #088;
+}
+
+th {
+  padding: 0 1em;
+}
+
+td {
+  text-align: center;
+}
+
+b {
+  color: #08f;
 }
