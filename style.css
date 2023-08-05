@@ -59,7 +59,7 @@ input, select {
   background-color: #fff;
   transition: all 0.3s ease-in-out;
   border: none;
-  border-bottom: solid 1px #f2a5a5;
+  border-bottom: solid 2px #f2a5a5;
   outline: none;
 }
 
@@ -69,6 +69,77 @@ input, select {
 
 .recipe input {
   text-align: center;
+}
+
+.memo-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.memo, .set-recipe, .remove {
+  transition: all .4s;
+  outline: none;
+  display: block;
+  border: 2px solid #f88;
+}
+
+.memo, .set-recipe {
+  background-color: #fff;
+  color: #f44;
+  font-size: 14px;
+}
+
+.memo:hover, .set-recipe:hover, .remove {
+  color: #fff;
+  background-color: #f88; 
+}
+
+.memo {
+  margin: 0.5em 1em;
+}
+
+.memo-item {
+  padding: 0;
+  margin: 0.5em 1em;
+  position: relative;
+  overflow: hidden;
+}
+
+.set-recipe {
+  padding-right: 4em;
+  width: 18em;
+}
+
+.set-recipe:hover {
+  padding-right: 0em;
+  padding-left: 2em;
+  width: 18em;
+}
+
+.set-recipe:hover::before {
+  position: absolute;
+  left: 1em;
+  display: block;
+  content: '◀';
+}
+
+.set-recipe:hover + .remove {
+  left: 100%;
+}
+
+.remove {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.remove:hover {
+  transition: all .4s;
+  width: 100%;
+}
+
+button {
+  padding: 0.5em 1em;
 }
 
 hr {
@@ -91,6 +162,7 @@ span {
 .row {
   display: flex;
   width: 30em;
+  margin: 0.5em 0;
 }
 
 .row > * {

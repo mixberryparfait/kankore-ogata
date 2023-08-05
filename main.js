@@ -10,6 +10,7 @@ const data = {
   開発資材: 1,
   空きドック: 3,
   recipe: '',
+  memos: ['3360/5460/6600/1950/20', '6840/6900/7000/2700/20', '2880/4160/4560/1690/1', '7000/7000/7000/2300/1']
 };
 
 const rate = (x, lower, upper) => {
@@ -27,7 +28,12 @@ const calc = () => {
 
   // レシピセット
 
-  data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}`
+  data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}`;
+
+  if(localStorage) {
+    localStorage.setItem('recipe', data['recipe']);
+  }
+
 
   // テーブル確率
 
@@ -185,16 +191,49 @@ const vm = new Vue ({
       }
       if(values[4]) this['開発資材'] = values[4] | 0
       if(values[5]) this['空きドック'] = values[5] | 0
+    },
+    addMemo() {
+      if (this.recipe.trim() !== "") {
+        this.memos.push(this.recipe);
+        this.saveMemo();
+      }
+    },
+    removeMemo(index) {
+      // メモのリストから特定のメモを削除
+      this.memos.splice(index, 1);
+      this.saveMemo();
+    },
+    saveMemo() {
+      if(localStorage) {  
+        localStorage.setItem('recipe_memo', this.memos.join(','));
+      } 
+    },
+    setMemoToInput(memo) {
+      // メモ内容を入力欄にセット
+      this.recipe = memo;
+      this.inputs()
     }
   },
   mounted() {
     calc();
   },
+  created() {
+    if(localStorage) {
+      let recipe; 
+      if(recipe = localStorage.getItem('recipe')) {
+        this.recipe = recipe; 
+        this.inputs();  
+      }
+      let memos;
+      if(memos = localStorage.getItem('recipe_memo')) {
+        this.memos = memos.split(',');
+      }
+    }
+  },
   computed: {
     calc: calc
   }
 });
-
 
 };
 

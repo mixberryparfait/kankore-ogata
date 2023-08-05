@@ -20,25 +20,39 @@
 		<hr>
 
 		<div id="ogata" class="container">
-			<div class="input">
-				<div class="label-value"><label>燃料</label><input type="number" v-model="燃料" autocomplete="燃料" step="10" max="7000" min="1500"></div>
-				<div class="label-value"><label>鋼材</label><input type="number" v-model="鋼材" autocomplete="鋼材" step="10" max="7000" min="1500"></div>
-				<div class="label-value"><label>弾薬</label><input type="number" v-model="弾薬" autocomplete="弾薬" step="10" max="7000" min="2000"></div>
-				<div class="label-value"><label>ボーキ</label><input type="number" v-model="ボーキ" autocomplete="ボーキ" step="10" max="7000" min="1000"></div>
-				<!-- <div class="label-value"><label>開発資材</label><input type="number" v-model="開発資材" autocomplete="開発資材" max="100" min="0"></div> -->
-				<div class="label-value"><label>開発資材</label>
-					<select v-model="開発資材" autocomplete="開発資材">
-						<option value="1">1</option>
-						<option value="20">20</option>
-						<option value="100">100</option>
-					</select>
+			<div class="flex">
+
+				<div class="input-container">
+					<div class="input">
+						<div class="label-value"><label>燃料</label><input type="number" v-model="燃料" autocomplete="燃料" step="10" max="7000" min="1500"></div>
+						<div class="label-value"><label>鋼材</label><input type="number" v-model="鋼材" autocomplete="鋼材" step="10" max="7000" min="1500"></div>
+						<div class="label-value"><label>弾薬</label><input type="number" v-model="弾薬" autocomplete="弾薬" step="10" max="7000" min="2000"></div>
+						<div class="label-value"><label>ボーキ</label><input type="number" v-model="ボーキ" autocomplete="ボーキ" step="10" max="7000" min="1000"></div>
+						<div class="label-value"><label>開発資材</label>
+							<select v-model="開発資材" autocomplete="開発資材">
+								<option value="1">1</option>
+								<option value="20">20</option>
+								<option value="100">100</option>
+							</select>
+						</div>
+					  <div class="label-value"><label>空きドック</label><input type="number" v-model="空きドック" autocomplete="空きドック" max="3" min="0"></div>
+					</div>
+					<div class="label-value recipe">
+						<label>レシピ入力</label><input type="text" v-model="recipe" @input="inputs" placeholder="1500/1500/2000/1000/1/0" />
+					</div>
 				</div>
 
-				<div class="label-value"><label>空きドック</label><input type="number" v-model="空きドック" autocomplete="空きドック" max="3" min="0"></div>
+				<div>
+					<button @click="addMemo" class="memo">メモする</button>
+					<div class="memo-container">
+				    <div v-for="(memo, index) in memos" :key="index" class="memo-item">
+				      <button @click="setMemoToInput(memo)" class="set-recipe">{{ memo }}</button>
+				      <button @click="removeMemo(index)" class="remove">✕</button>
+				    </div>
+				  </div>
+				</div>
 			</div>
-			<div class="label-value recipe">
-				<label>レシピ入力</label><input type="text" v-model="recipe" @input="inputs" placeholder="1500/1500/2000/1000/1/0" />
-			</div>
+
 	    <hr>
 	    <div class="flex">
     		<div>
