@@ -10,6 +10,7 @@ const data = {
   開発資材: 1,
   空きドック: 3,
   recipe: '',
+  ship_change: false,
   memos: ['3360/5460/6600/1950/20', '6840/6900/7000/2700/20', '2880/4160/4560/1690/1', '7000/7000/7000/2300/1']
 };
 
@@ -25,6 +26,7 @@ const rate = (x, lower, upper) => {
 
 
 const calc = () => {
+  console.log('calc');
 
   // レシピセット
 
@@ -130,7 +132,9 @@ const calc = () => {
         if (num10 < 1) {
             num10 = 2 - num10;
         }
-        const ship = table_data[t][num10];
+
+        const ship = (data.ship_change && t == 1 && [1,2,4,6,13,27,28].includes(num10)) ? 'Bismarck' : table_data[t][num10];
+
         if(!results[ship]) results[ship] = 0;
         results[ship] += table_rate[t] / entry_count / num8;
       }
@@ -237,46 +241,3 @@ const vm = new Vue ({
 
 };
 
-
-///////////////////////////////////////////
-
-option = {
-  legend: {
-    data: ['Expenses', 'Income']
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
-  },
-  xAxis: {
-    type: 'category',
-    data: (function () {
-      let list = [];
-      for (let i = 0; i <= 3; i++) {
-        list.push(i);
-      }
-      return list;
-    })()
-  },
-  series: [
-    {
-      name: 'Placeholder',
-      type: 'bar',
-      stack: 'Total',
-      silent: true,
-      itemStyle: {
-        borderColor: 'transparent',
-        color: 'transparent'
-      },
-      emphasis: {
-        itemStyle: {
-          borderColor: 'transparent',
-          color: 'transparent'
-        }
-      },
-      data: [0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292]
-    },
-  ]
-};

@@ -4,8 +4,9 @@ body * {
 
 body {
 	padding: 2em;
-  font-size: 12px;
+  font-size: 16px;
   color: #444;
+  min-width: 1100px;
 }
 
 h1 {
@@ -21,7 +22,7 @@ h1 {
 }
 
 strong {
-  color: #e40;
+  color: #08f;
 }
 
 details {
@@ -39,36 +40,42 @@ p {
 }
 
 .label-value {
-  margin: 0.5em 1em;
+  margin: 1em 2em;
 }
 
 .label-value label {
   position: absolute;
-  font-size: 12px;
   font-weight: bold;
   text-align: left;
 }
 
-input, select {
+input:not([type="checkbox"]), select {
   display: block;
   text-align: right;
   padding: 0 1em;
-  padding-top: 20px;
-  font-size: 16px;
+  padding-top: 2em;
   color: #333;
   background-color: #fff;
   transition: all 0.3s ease-in-out;
   border: none;
   border-bottom: solid 2px #f2a5a5;
   outline: none;
+  font-size: inherit;
 }
 
 .input input {
   width: 6em;
 }
 
-.recipe input {
+.recipe input[type="text"] {
   text-align: center;
+}
+
+.change-container {
+  display: flex;
+  align-items: center;
+  margin: 1em;
+  font-weight: bold;
 }
 
 .memo-container {
@@ -86,7 +93,6 @@ input, select {
 .memo, .set-recipe {
   background-color: #fff;
   color: #f44;
-  font-size: 14px;
 }
 
 .memo:hover, .set-recipe:hover, .remove {
@@ -146,7 +152,7 @@ hr {
   border: none;
   border-top: 5px dashed #FFB6C1;
   height: 0;
-  margin: 20px 0;
+  margin: 2em 0;
 }
 
 span {
@@ -183,7 +189,6 @@ span {
 }
 
 tbody {
-  font-size: 12px;
 }
 
 .result tbody {
@@ -203,12 +208,20 @@ tbody {
 
 /**************************/
 
+.col2 {
+  display: flex;
+}
+
+.col2 > *:last-child {
+  flex-grow: 1;
+}
+
 li {
   margin: 0.5em;
 }
 
 em {
-  color: #c00;
+  color: #08f;
 }
 
 img {
@@ -222,6 +235,10 @@ code {
   color: #088;
 }
 
+label {
+  font-weight: bold;
+}
+
 th {
   padding: 0 1em;
 }
@@ -232,4 +249,39 @@ td {
 
 b {
   color: #08f;
+}
+
+/*************************/
+
+input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-container {
+  margin: 2em;
+  display: flex;
+}
+
+.checkbox {
+  position: relative;
+  border: 2px solid #f80;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 1em;
+}
+
+input[type="checkbox"]:checked + .checkbox {
+  background-color: #f88;
+}
+
+:checked + .checkbox::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: .1em;
+  width: 1em;
+  height: 0.5em;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  transform: rotate(-45deg);
 }
