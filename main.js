@@ -121,7 +121,7 @@ const calc = () => {
     //////////
 
     const range = ranges[data['空きドック']];
-    const entry_count = range[1] - range[0] - 1;
+    const entry_count = range[1] - range[0];
 
     for(let num2 = range[0]; num2 < range[1]; num2++) {
       for(let i = 0; i < num8; i++) {
