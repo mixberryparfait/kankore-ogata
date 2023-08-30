@@ -95,6 +95,9 @@
 		　<p>これ以降は<strong><a href="https://twitter.com/KanColle_STAFF/status/1525067471786758144">大和建造率上昇</a>等テーブル自体が変わってたり、ブラウザ版と確実に違ってるので参考程度にしてください</strong></p>
 
 		  <table class="result">
+		  	<thead>
+		  		<tr><th>艦</th><th>建造率</th><th>燃料</th><th>弾薬</th><th>鋼材</th><th>ボーキ</th><th>開発資材</th></tr>	
+		  	</thead>
 		  	<tbody>
 			    <tr v-for="(row, rowIndex) in calc[5]" :key="rowIndex">
 			      <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
@@ -106,6 +109,7 @@
 	  <hr>
 	  <p>変更履歴</p>
 	  <ul>
+		  <li>2023.08.30 機能追加：資源効率参考表示</li>
 		  <li>2023.08.07 機能追加：ビスマルク建造に対応 (あくまで改の置換テーブル)</li>
 		  <li>2023.08.07 バグ修正：分母1個分確率が高く出ていたのを修正</li>
 		  <li>2023.08.05 要望対応：メモ機能追加</li>

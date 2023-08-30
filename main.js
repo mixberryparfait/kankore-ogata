@@ -147,7 +147,15 @@ const calc = () => {
     [(table_rate[2] * 100).toFixed(2), skips[2]],
     [(table_rate[3] * 100).toFixed(2), skips[3]],
     ranges[data['空きドック']],
-    Object.entries(results).map(e => {e[1] = (e[1] * 100).toFixed(2) + ' %'; return e;})
+    Object.entries(results).map(e => [
+      e[0], 
+      (e[1] * 100).toFixed(2) + ' %', 
+      data['燃料'] / e[1]| 0,
+      data['弾薬'] / e[1] | 0,
+      data['鋼材'] / e[1] | 0,
+      data['ボーキ'] / e[1] | 0,
+      data['開発資材'] / e[1] | 0,
+    ])
   ];
 }
 
