@@ -204,6 +204,10 @@ span {
   border-bottom: solid 2px #FFB6C1 !important;
 }
 
+.result tbody tr:hover {
+  background-color: #fee;
+}
+
 
 /*.result tbody {
   display: flex;
