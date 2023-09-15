@@ -1,5 +1,5 @@
-
-window.onload = () => {
+//document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
   console.log('main.js');
 
 const data = {
@@ -11,7 +11,7 @@ const data = {
   空きドック: 3,
   recipe: '',
   ship_change: false,
-  memos: ['3360/5460/6600/1950/20', '6840/6900/7000/2700/20', '2880/4160/4560/1690/1', '7000/7000/7000/2300/1']
+  memos: ['3360/5460/6600/1950/20/3', '6840/6900/7000/2700/20/3', '2880/4160/4560/1690/1/3', '7000/7000/7000/2300/1/3']
 };
 
 const rate = (x, lower, upper) => {
@@ -30,7 +30,7 @@ const calc = () => {
 
   // レシピセット
 
-  data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}`;
+  data['recipe'] = `${data['燃料']}/${data['弾薬']}/${data['鋼材']}/${data['ボーキ']}/${data['開発資材']}/${data['空きドック']}`;
 
   if(localStorage) {
     localStorage.setItem('recipe', data['recipe']);
@@ -179,7 +179,7 @@ const displayChart = (r) => {
           { value: r[0], name: '空母' },
           { value: r[1], name: '武蔵' },
           { value: r[2], name: '大和' },
-          { value: r[3], name: '最低' },
+          { value: r[3], name: '矢矧' },
         ],
       }
     ]
@@ -193,6 +193,7 @@ const vm = new Vue ({
   el: '#ogata',
   data: data,
   methods: {
+
     inputs() {
       const values = this.recipe.split(/[^\d]+/);
       if(values.length >= 4) {
@@ -204,48 +205,71 @@ const vm = new Vue ({
       if(values[4]) this['開発資材'] = values[4] | 0
       if(values[5]) this['空きドック'] = values[5] | 0
     },
+
+    adjust(key, val) {
+      this[key] += val | 0;
+
+      if(this['燃料'] > 7000) this['燃料'] = 7000;
+      else if(this['燃料'] < 1500) this['燃料'] = 1500;
+      if(this['弾薬'] > 7000) this['弾薬'] = 7000;
+      else if(this['弾薬'] < 1500) this['弾薬'] = 1500;
+      if(this['鋼材'] > 7000) this['鋼材'] = 7000;
+      else if(this['鋼材'] < 2000) this['鋼材'] = 2000;
+      if(this['ボーキ'] > 7000) this['ボーキ'] = 7000;
+      else if(this['ボーキ'] < 1000) this['ボーキ'] = 1000;
+    },
+
     addMemo() {
       if (this.recipe.trim() !== "") {
         this.memos.push(this.recipe);
         this.saveMemo();
       }
     },
+
     removeMemo(index) {
       // メモのリストから特定のメモを削除
       this.memos.splice(index, 1);
       this.saveMemo();
     },
+
     saveMemo() {
       if(localStorage) {  
         localStorage.setItem('recipe_memo', this.memos.join(','));
       } 
     },
+
     setMemoToInput(memo) {
       // メモ内容を入力欄にセット
       this.recipe = memo;
       this.inputs()
     }
   },
+
   mounted() {
     calc();
   },
+
   created() {
-    if(localStorage) {
-      let recipe; 
-      if(recipe = localStorage.getItem('recipe')) {
-        this.recipe = recipe; 
-        this.inputs();  
+    try {
+      if(localStorage) {
+        let recipe; 
+        if(recipe = localStorage.getItem('recipe')) {
+          this.recipe = recipe; 
+          this.inputs();
+        }
+        let memos;
+        if(memos = localStorage.getItem('recipe_memo')) {
+          this.memos = memos.split(',');
+        }
       }
-      let memos;
-      if(memos = localStorage.getItem('recipe_memo')) {
-        this.memos = memos.split(',');
-      }
+    } catch(e) {
+      console.log(e);
     }
   },
+
   computed: {
     calc: calc
   }
 });
 
-};
-
+});

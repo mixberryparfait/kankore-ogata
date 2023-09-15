@@ -1,107 +1,95 @@
-body * {
-	box-sizing: border-box;
-}
 
-body {
-	padding: 2em;
-  font-size: 16px;
-  color: #444;
-  min-width: 1100px;
-}
 
-h1 {
-  font-family: 'Roboto', sans-serif;
-  font-size: 2rem;
-  color: #fff;
-  text-shadow: 2px 2px #F2A5A5;
-  text-align: center;
-  background-color: #F2A5A5;
-  padding: 5px;
-  border-radius: 20px;
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.4);
-}
 
-strong {
-  color: #08f;
-}
-
-details {
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-p {
-  padding: 1em;
-}
-
-.input {
-  display: grid;
-  grid-template-columns: 7rem 7rem;
-}
-
-.label-value {
-  margin: 1em 2em;
-}
-
-.label-value label {
-  position: absolute;
-  font-weight: bold;
-  text-align: left;
-}
-
-input:not([type="checkbox"]), select {
-  display: block;
-  text-align: right;
-  padding: 0 1em;
-  padding-top: 2em;
-  color: #333;
-  background-color: #fff;
-  transition: all 0.3s ease-in-out;
-  border: none;
-  border-bottom: solid 2px #f2a5a5;
-  outline: none;
-  font-size: inherit;
-}
-
-.input input {
-  width: 6em;
-}
-
-.recipe input[type="text"] {
-  text-align: center;
-}
-
-.change-container {
-  display: flex;
-  align-items: center;
-  margin: 1em;
-  font-weight: bold;
-}
-
-.memo-container {
+.resource-input-container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+
+  & > * {
+    min-width: 34%;
+    margin: 1em 2em;
+  }
+
+  .resource-input {
+    display: flex;
+    & > * {
+      min-width: 34%;
+    }
+
+    .input-field {
+      width: 5em;
+
+      & input {
+        font-size: 24px;
+      }
+    }
+
+    .resource-adjust {
+      display: grid;
+      grid-template-rows: 2em 2em;
+      grid-template-areas:
+        "up100   up1000"
+        "down100 down1000";
+
+      & button {
+        margin: 0.25em;
+        padding: 0 1ex;
+        height: 2em;
+        line-height: 2em;
+
+        &:nth-child(1) { grid-area: up100 }
+        &:nth-child(2) { grid-area: down100 }
+        &:nth-child(3) { grid-area: up1000 }
+        &:nth-child(4) { grid-area: down1000 }
+      }
+    }
+  }
+
+  .resource-select {
+    
+    & div {
+      border: solid 1px #26a69a;
+      color: #26a69a;
+      width: 2em;
+      text-align: center;
+      font-size: 16px;    
+
+      &::before {
+        display: none;
+      }
+    }
+
+    & input:checked+div {
+      background-color: #26a69a;
+      color: white;
+    }
+  }
 }
 
-.memo, .set-recipe, .remove {
-  transition: all .4s;
-  outline: none;
-  display: block;
-  border: 2px solid #f88;
+/*****************/
+
+.recipe-input {
+  display: flex;
+  margin-top: 1em;
+  justify-content: center;
+
+  & .input-field input {
+    width: 14em;
+    text-align: center;
+    font-size: 20px;
+    margin: 0 0.5em;
+  }
 }
 
-.memo, .set-recipe {
-  background-color: #fff;
-  color: #f44;
-}
-
-.memo:hover, .set-recipe:hover, .remove {
-  color: #fff;
-  background-color: #f88; 
+.memo_button {
+  width: 7em;
 }
 
 .memo {
-  margin: 0.5em 1em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .memo-item {
@@ -109,87 +97,107 @@ input:not([type="checkbox"]), select {
   margin: 0.5em 1em;
   position: relative;
   overflow: hidden;
-}
-
-.set-recipe {
-  padding-right: 4em;
   width: 18em;
+  border: solid 1px #2bbbad;
+
+  & .set-recipe {
+    transition: all .4s;
+    padding-left: 0;
+    padding-right: 3em;
+    width: 100%;
+    font-weight: bold;
+
+    &::before {
+      position: absolute;
+      left: -3em;
+      width: 3em;
+      text-align: center;
+      display: block;
+      content: '▲';
+      transition: all .4s;
+    }
+  }
 }
 
 .set-recipe:hover {
   padding-right: 0em;
-  padding-left: 2em;
-  width: 18em;
+  padding-left: 3em;
 }
 
 .set-recipe:hover::before {
-  position: absolute;
   left: 1em;
-  display: block;
-  content: '◀';
 }
 
 .set-recipe:hover + .remove {
-  left: 100%;
+  right: -3em;
 }
 
 .remove {
+  transition: all .4s;
   position: absolute;
   right: 0;
-  top: 0;
+  width: 3em;
 }
 
 .remove:hover {
-  transition: all .4s;
   width: 100%;
 }
 
-button {
-  padding: 0.5em 1em;
-}
+/*****************/
 
-hr {
-  border: none;
-  border-top: 5px dashed #FFB6C1;
-  height: 0;
-  margin: 2em 0;
-}
-
-span {
-  display: inline-block;
-  text-align: right;
-  width: 5em;
-}
-
-.flex {
+.table-result {
+  margin-top: 3em;
   display: flex;
-}
+  flex-wrap: wrap;
 
-.row {
-  display: flex;
-  width: 30em;
-  margin: 0.5em 0;
-}
+  .row {
+    margin: 0;
 
-.row > * {
-  margin: 0 1em;
-}
+    & .rate {
+      display: inline-block;
+      width: 5em;
+      text-align: right;
+    }
 
-.rate {
-  width: 5em;
-}
-
-.val {
-  width: 2em;
+    & .val {
+      width: 2em;
+      text-align: right;
+    }
+  }
 }
 
 #table_chart {
+  flex-grow: 1;
   min-width: 25em;
   min-height: 8em;
 }
 
+.table-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/*@media screen and (width > 1000px) {*/
+@media (width >= 1320px) {
+
+  .input-container {
+    width: 500px;
+  }
+
+  .table-result {
+    flex-direction: column;
+    margin-left: 2em;
+  }
+}
+
+/*****************/
+
+.result th {
+  border-bottom: solid 2px #408;
+}
+
 .result td {
-  width: 6em;
+  min-width: 6em;
 }
 
 .result tr > * {
@@ -198,108 +206,4 @@ span {
 
 .result tr > *:first-child {
   text-align: center;
-}
-
-.result th {
-  border-bottom: solid 2px #FFB6C1 !important;
-}
-
-.result tbody tr:hover {
-  background-color: #fee;
-}
-
-
-/*.result tbody {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.result tr {
-  display: grid;
-  grid-template-columns: 4.5em 4.5em;
-  width: 15em;
-}
-
-.result tr > td:last-child {
-  text-align: right;
-}*/
-
-/**************************/
-
-.col2 {
-  display: flex;
-}
-
-.col2 > *:last-child {
-  flex-grow: 1;
-}
-
-li {
-  margin: 0.5em;
-}
-
-em {
-  color: #08f;
-}
-
-img {
-  margin-left: 1em;
-}
-
-code {
-  display: block;
-  margin-top: 1em;
-  padding: 0.5em;
-  color: #088;
-}
-
-label {
-  font-weight: bold;
-}
-
-th {
-  padding: 0 1em;
-}
-
-td {
-  text-align: center;
-}
-
-b {
-  color: #08f;
-}
-
-/*************************/
-
-input[type="checkbox"] {
-  display: none;
-}
-
-.checkbox-container {
-  margin: 2em;
-  display: flex;
-}
-
-.checkbox {
-  position: relative;
-  border: 2px solid #f80;
-  width: 1.5em;
-  height: 1.5em;
-  margin-right: 1em;
-}
-
-input[type="checkbox"]:checked + .checkbox {
-  background-color: #f88;
-}
-
-:checked + .checkbox::after {
-  content: '';
-  display: block;
-  position: absolute;
-  top: .1em;
-  width: 1em;
-  height: 0.5em;
-  border-left: 3px solid #fff;
-  border-bottom: 3px solid #fff;
-  transform: rotate(-45deg);
 }

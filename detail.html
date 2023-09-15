@@ -3,87 +3,95 @@
     <title>大型建造仕様</title>
 
     <meta name="description" content="艦これ改大型建造のソースコードから仕様を解読します">
-    <meta name="keywords" content="艦これ,大型建造,仕様,レシピ,検証">
+    <meta name="keywords" content="艦これ,大型建造">
 
-    <link rel="stylesheet" href="style.css" type="text/css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" integrity="sha512-EmNxF3E6bM0Xg1zvmkeYD3HDBeGxtsG92IxFt1myNZhXdCav9MzvuH/zNMBU1DmIPN6njrhX1VTbqdJxQ2wHDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/default.css" type="text/css">
+    <link rel="stylesheet" href="detail.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="/common.js"></script>
 
   </head>
   <body>
+    <div class="container">
       <h1>大型建造仕様</h1>
 
-      <p><strong><a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/Program.cs">このリポジトリのソースコード</a>に基づいた解説なので必ずしも正しい保証はありません<br>
-       (コードの解読が間違ってたらごめんなさい)<br>
-      特にテーブルエントリに関しては確実に変更されています</strong></p>
+      <div class="section">
+        <p><strong><a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/Program.cs">このリポジトリのソースコード</a>に基づいた解説なので必ずしも正しい保証はありません<br>
+         (コードの解読が間違ってたらごめんなさい)</strong></p>
+        <p><strong>特にテーブルエントリに関しては確実に変更されています</strong></p>
 
-      <p>大型建造も　通常建造　開発　と同じく　テーブル決定　⇒　テーブル内のエントリ決定　の２フェーズになってます</p>
+        <p>大型建造も　通常建造　開発　と同じく<br>
+          テーブル決定　⇒　テーブル内のエントリ決定<br>
+        の２フェーズになってます</p>
+      </div>
 
-      <hr>
-
-      <h2> テーブル決定 </h2>
+      <div class="section">
+        <h2> テーブル決定 </h2>
       
-      <ul>
-	      <li>各資源 2400/1050/2800/2800 を超えると 空母テーブルに入り始めて <em>3600/1950/4200/5200 を超えると太鳳テーブル確定</em></li>
-	      <li>空母テーブルに入らなかった場合<br>
-	      各資源 2240/2940/4400/1050/20 を超えると 武蔵テーブルに入り始めて <em>3360/5460/6600/1950/20 を超えると武蔵テーブル確定</em></li>
-	      <li>武蔵テーブルにも入らなかった場合<br>
-	      各資源 1920/2240/3040/910 を超えると 大和テーブルに入り始めて <em>2880/4160/4560/1690 を超えると大和テーブル確定</em></li>
-	      <li>以上どこにも入らなければ矢矧テーブル</li>
-	    </ul>
+        <p>各資源 2400/1050/2800/2800 を超えると 空母テーブルに入り始めて <em>3600/1950/4200/5200 を超えると太鳳テーブル確定</em></p>
+  	      <li>空母テーブルに入らなかった場合<br>
+  	      各資源 2240/2940/4400/1050/20 を超えると 武蔵テーブルに入り始めて <em>3360/5460/6600/1950/20 を超えると武蔵テーブル確定</em></li>
+  	      <li>武蔵テーブルにも入らなかった場合<br>
+  	      各資源 1920/2240/3040/910 を超えると 大和テーブルに入り始めて <em>2880/4160/4560/1690 を超えると大和テーブル確定</em></li>
+  	      <li>以上どこにも入らなければ矢矧テーブル</li>
+  	    </ul>
 
-      <p><em>基本的には乱数にしてもメリットがないので入りたいテーブル確定分以上資源を盛ること<br>
-      	戦艦テーブルに入りたい場合はボーキを太鳳テーブル未満に<br>
-        大和テーブルに入りたい場合は開発資材を 1 にするだけで調整できます</em></p>
-
-      <hr>
-
-      <h2>エントリ決定</h2>
-      <p>空きドック依存の始点乱数 - 資源定数依存の乱数 の２つの乱数の差で決定<br>
-       ただし 0 以下になったら 1 で折り返す
-      </p>
-
-      <h3> 始点乱数 </h3>
-      <div class="col2">
-        <div>
-          <p>空きドック 0 - 3 に応じて始点が以下の範囲から一様乱数で選ばれる</p>
-          <ul>
-          	<li>空き 0: 3 ～ 99</li>
-          	<li>空き 1: 1 ～ 99</li>
-          	<li>空き 2: 1 ～ 95</li>
-          	<li>空き 3: 1 ～ 91</li>
-          </ul>
-          <p>空きドックが多いほど前半が選ばれやすい</p>
-          <p><em>特に空き 0 の場合最初 3 枠が削られるのでまるゆ以外が目的なら絶対に空きは作ること</em></p>
-          <p><em>まるゆ狙い最低値の場合空きをうめると最初２枠がでなくなる分まるゆ率がわずかに上昇<br>
-            かわりに矢矧の確率が大きく低下（改テーブルの場合完全に出なくなる）<br>
-            矢矧もほしいなら必ず空きは作ること</em></p>
-        </div>
-        <div id="emptydock"></div>
+        <p><em>基本的には乱数にしてもメリットがないので入りたいテーブル確定分以上資源を盛ること<br>
+        	戦艦テーブルに入りたい場合はボーキを太鳳テーブル未満に<br>
+          大和テーブルに入りたい場合は開発資材を 1 にするだけで調整できます</em></p>
       </div>
 
-      <hr>
+      <div class="section">
+        <h2>エントリ決定</h2>
+        <p>空きドック依存の始点乱数 - 資源定数依存の乱数 の２つの乱数の差で決定<br>
+         ただし 0 以下になったら 1 で折り返す
+        </p>
 
-      <h3> 資源量補正 </h3>
-      <div class="flex">
-        <div>
-          <p>始点位置から 0 ～ 資源定数(後述) の乱数分若い番号にスライド </p>
-          <p><em>資源定数が 0 ならスライドが起きず空きドックの始点がそのまま建造結果になる</em></p>
+        <h3> 始点乱数 </h3>
+        <div class="col2">
+          <div>
+            <p>空きドック 0 - 3 に応じて始点が以下の範囲から一様乱数で選ばれる</p>
+            <ul>
+            	<li>空き 0: 3 ～ 99</li>
+            	<li>空き 1: 1 ～ 99</li>
+            	<li>空き 2: 1 ～ 95</li>
+            	<li>空き 3: 1 ～ 91</li>
+            </ul>
+            <p>空きドックが多いほど前半が選ばれやすい</p>
+            <p><em>特に空き 0 の場合最初 3 枠が削られるのでまるゆ以外が目的なら絶対に空きは作ること</em></p>
+            <p><em>まるゆ狙い最低値の場合空きをうめると最初２枠がでなくなる分まるゆ率がわずかに上昇<br>
+              かわりに矢矧の確率が大きく低下（改テーブルの場合完全に出なくなる）<br>
+              矢矧もほしいなら必ず空きは作ること</em></p>
+          </div>
 
-  	      <p>スライドの結果 0 以下になった場合 2 から再びおりかえす<br>
-          3 -> 2 -> 1 -> 2 -> 3 ...<br>
-          なので 0 番エントリにあたることは絶対にない？？？</p>
-          <p>【例】<br>
-            始点乱数 5 で資源定数 10 の場合<br>
-            0 ～ 9 スライドされて -4 ～ 5 が選ばれる<br>
-            0 ～ -4 にあったときは 2～6 に置き換わる<br>
-            [ 5 4 3 2 1 2 3 4 5 6 ] の 10 個から抽選されるので 2 ～ 5 が当たりやすくなる
-          </p>
-          <p><em>資源定数を盛ると、折返しが発生することで 2 番以降の序盤エントリが倍出やすくなるため当たり確率があがる</em></p>
+          <div id="emptydock"></div>
         </div>
-        <div>
-          <img src="img/resource_factor.png">
+
+        <h3> 資源量補正 </h3>
+        <div class="col2">
+          <div>
+            <p>始点位置から 0 ～ 資源定数(後述) の乱数分若い番号にスライド </p>
+            <p><em>資源定数が 0 ならスライドが起きず空きドックの始点がそのまま建造結果になる</em></p>
+
+    	      <p>スライドの結果 0 以下になった場合 2 から再びおりかえす<br>
+            3 -> 2 -> 1 -> 2 -> 3 ...<br>
+            なので 0 番エントリにあたることは絶対にない？？？</p>
+            <p>【例】<br>
+              始点乱数 5 で資源定数 10 の場合<br>
+              0 ～ 9 スライドされて -4 ～ 5 が選ばれる<br>
+              0 ～ -4 にあったときは 2～6 に置き換わる<br>
+              [ 5 4 3 2 1 2 3 4 5 6 ] の 10 個から抽選されるので 2 ～ 5 が当たりやすくなる
+            </p>
+            <p><em>資源定数を盛ると、折返しが発生する<br>
+              => 2 番以降の序盤エントリが倍出やすくなるため当たり確率があがる</em></p>
+          </div>
+          <div>
+            <img src="img/resource_factor.png">
+          </div>
         </div>
-      </div>
 
       <h3>資源定数</h3>
       <ul>
@@ -230,8 +238,9 @@
 <tr><td>99</td><td><b>まるゆ</b></td><td>山城</td><td>山城</td><td><b>まるゆ</b></td></tr>
     </tbody></table>
     <p>★は秘書官で置き換わるエントリ</p>
-  </body>
-  <script>
+  </div>
+</body>
+<script>
 var chartDom = document.getElementById('emptydock');
 var myChart = echarts.init(chartDom);
 var option;
@@ -271,5 +280,5 @@ option = {
 };
 
 option && myChart.setOption(option);
-  </script>
+</script>
 </html>

@@ -1,0 +1,30 @@
+body {
+}
+
+em {
+  font-style: normal;
+  font-weight: bold;
+  background: linear-gradient(transparent 70%, #eff 70%);
+}
+
+strong {
+  color: #e91e63;
+  font-weight: bold;
+  background: linear-gradient(transparent 70%, #fee 70%);
+}
+
+li {
+  margin: 1em 0;
+}
+
+.col2 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col2 > *:last-child {
+  flex-grow: 1;
+  min-width: 10em;
+  min-height: 20em;
+  margin-left: 2em;
+}

@@ -3,122 +3,210 @@
   	<title>大型建造レシピジェネレーター</title>
     <meta name="description" content="艦これ大型建造レシピのテーブル分岐率、出現確率計算します">
     <meta name="keywords" content="艦これ,大型建造,レシピ">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/default.css" type="text/css">
   	<link rel="stylesheet" href="style.css" type="text/css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   	<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  	<script src="/common.js"></script>
   	<script src="data.js"></script>
   	<script src="main.js"></script>
 	</head>
 	<body>
-		<h1>[艦これ]　大型建造レシピジェネレーター</h1>
+		<div class="container">
+			<h1>[艦これ]　大型建造レシピジェネレーター</h1>
 
-		<p><a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/mst_createship_large.xml">https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/</a><br>
-		のロジックとテーブルデータをお借りして建造率を計算します</p>
+			<p><a href="https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/mst_createship_large.xml">https://github.com/bgli100/KanColleKai_LSCEmu/blob/master/KanColleKai_LSCEmu/</a><br>
+			のロジックとテーブルデータをお借りして建造率を計算します</p>
 
-		<p>興味あれば <a href="detail.html">大型建造仕様</a> を見てください</p>
+			<p>興味あれば <a href="detail.html">大型建造仕様</a> を見てください</p>
 
-		<hr>
+			<hr>
 
-		<div id="ogata" class="container">
-			<div class="flex">
+			<div id="ogata">
+				<div class="table-container">
+					<div class="input-container">
+						<details open>
+							<summary>個別資源入力</summary>
+							<div class="resource-input-container">
 
-				<div class="input-container">
-					<div class="input">
-						<div class="label-value"><label>燃料</label><input type="number" v-model="燃料" autocomplete="燃料" step="10" max="7000" min="1500"></div>
-						<div class="label-value"><label>鋼材</label><input type="number" v-model="鋼材" autocomplete="鋼材" step="10" max="7000" min="1500"></div>
-						<div class="label-value"><label>弾薬</label><input type="number" v-model="弾薬" autocomplete="弾薬" step="10" max="7000" min="2000"></div>
-						<div class="label-value"><label>ボーキ</label><input type="number" v-model="ボーキ" autocomplete="ボーキ" step="10" max="7000" min="1000"></div>
-						<div class="label-value"><label>開発資材</label>
-							<select v-model="開発資材" autocomplete="開発資材">
-								<option value="1">1</option>
-								<option value="20">20</option>
-								<option value="100">100</option>
-							</select>
-						</div>
-					  <div class="label-value"><label>空きドック</label><input type="number" v-model="空きドック" autocomplete="空きドック" max="3" min="0"></div>
-					</div>
+								<div class="resource-input">
+					    		<div class="input-field">
+									  <input type="number" v-model="燃料" autocomplete="燃料" step="10" max="7000" min="1500" placeholder="燃料">
+									  <label>燃料</label>
+									</div>
+									<div class="resource-adjust">
+										<button class="waves-effect btn-small" @click="adjust('燃料',  100)">+ 100</button>
+										<button class="waves-effect btn-small" @click="adjust('燃料', -100)">- 100</button>
+										<button class="waves-effect btn-small" @click="adjust('燃料', 1000)">+1000</button>
+										<button class="waves-effect btn-small" @click="adjust('燃料',-1000)">-1000</button>
+									</div>
+								</div>
 
-					<div class="label-value recipe">
-						<label>レシピ入力</label><input type="text" v-model="recipe" @input="inputs" placeholder="1500/1500/2000/1000/1/0" />
-					</div>
+								<div class="resource-input">
+					    		<div class="input-field">
+					    			<input type="number" v-model="鋼材" autocomplete="鋼材" step="10" max="7000" min="1500" placeholder="鋼材">
+					    			<label>鋼材</label>
+					    		</div>
+									<div class="resource-adjust">
+										<button class="waves-effect btn-small" @click="adjust('鋼材',  100)">+ 100</button>
+										<button class="waves-effect btn-small" @click="adjust('鋼材', -100)">- 100</button>
+										<button class="waves-effect btn-small" @click="adjust('鋼材', 1000)">+1000</button>
+										<button class="waves-effect btn-small" @click="adjust('鋼材',-1000)">-1000</button>
+									</div>
+								</div>
 
-	        <label class="checkbox-container">
-	          <input type="checkbox" v-model="ship_change">
-	          <div class="checkbox"></div>
-	          ビスマルク建造
-	        </label>
+								<div class="resource-input">
+					    		<div class="input-field">
+										<input type="number" v-model="弾薬" autocomplete="弾薬" step="10" max="7000" min="2000" placeholder="弾薬">
+										<label>弾薬</label>
+					    		</div>
+									<div class="resource-adjust">
+										<button class="waves-effect btn-small" @click="adjust('弾薬',  100)">+ 100</button>
+										<button class="waves-effect btn-small" @click="adjust('弾薬', -100)">- 100</button>
+										<button class="waves-effect btn-small" @click="adjust('弾薬', 1000)">+1000</button>
+										<button class="waves-effect btn-small" @click="adjust('弾薬',-1000)">-1000</button>
+									</div>
+								</div>
 
-				</div>
+								<div class="resource-input">
+					    		<div class="input-field">
+										<input type="number" v-model="ボーキ" autocomplete="ボーキ" step="10" max="7000" min="1000" placeholder="ボーキ">
+										<label>ボーキ</label>
+					    		</div>
+									<div class="resource-adjust">
+										<button class="waves-effect btn-small" @click="adjust('ボーキ',  100)">+ 100</button>
+										<button class="waves-effect btn-small" @click="adjust('ボーキ', -100)">- 100</button>
+										<button class="waves-effect btn-small" @click="adjust('ボーキ', 1000)">+1000</button>
+										<button class="waves-effect btn-small" @click="adjust('ボーキ',-1000)">-1000</button>
+									</div>
+								</div>
 
-				<div>
-					<button @click="addMemo" class="memo">メモする</button>
-					<div class="memo-container">
-				    <div v-for="(memo, index) in memos" :key="index" class="memo-item">
-				      <button @click="setMemoToInput(memo)" class="set-recipe">{{ memo }}</button>
-				      <button @click="removeMemo(index)" class="remove">✕</button>
+								<div class="resource-select">	
+									<label>開発資材</label><br>
+									<label>
+										<input type="radio" v-model="開発資材" value=1>
+										<div class="waves-effect">1</div>
+									</label>
+									<label>
+										<input type="radio" v-model="開発資材" value=20>
+										<div class="waves-effect">20</div>
+									</label>
+									<label>
+										<input type="radio" v-model="開発資材" value=100>
+										<div class="waves-effect">100</div>
+									</label>
+								</div>	
+
+								<div class="resource-select">	
+									<label>空きドック</label><br>
+									<label>
+										<input type="radio" v-model="空きドック" value=3 id="empty3">
+										<div class="waves-effect">3</div>
+									</label>
+									<label>
+										<input type="radio" v-model="空きドック" value=2 id="empty2">
+										<div class="waves-effect">2</div>
+									</label>
+									<label>
+										<input type="radio" v-model="空きドック" value=1 id="empty1">
+										<div class="waves-effect">1</div>
+									</label>
+									<label>
+										<input type="radio" v-model="空きドック" value=0 id="empty0">
+										<div class="waves-effect">0</div>
+									</label>
+								</div>
+							</div>
+						</details>
+
+						<div class="recipe-input">
+			    		<div class="input-field">
+			    			<input type="text" v-model="recipe" @input="inputs" placeholder="1500/1500/2000/1000/1/0" />	
+			    			<label>レシピ入力</label>	
+			    		</div>
+			    		<div class="valign-wrapper">	
+				    	  <button @click="addMemo" class="waves-effect btn memo_button">メモする</button>
+				      </div>	
 				    </div>
+
+						<div class="memo">
+					    <div v-for="(memo, index) in memos" :key="index" class="memo-item">
+					      <button @click="setMemoToInput(memo)" class="set-recipe waves-effect btn-small white teal-text">{{ memo }}
+					      </button>
+					      <button @click="removeMemo(index)" class="remove waves-effect btn-small">✕</button>
+					    </div>
+					  </div>
+					</div>
+
+			    <div class="table-result">
+		    		<div>
+					    <div class="row">
+					    	<div class="col">太鳳テーブル:<span class="rate">{{calc[0][0]}} %</span></div>
+					    	<div class="col">資源定数: <span class="val">{{calc[0][1]}}</span></div>
+					    </div>
+					    <div class="row">
+					      <div class="col">武蔵テーブル:<span class="rate">{{calc[1][0]}} %</span></div>
+					      <div class="col">資源定数: <span class="val">{{calc[1][1]}}</span></div>
+					    </div>
+					    <div class="row">
+					      <div class="col">大和テーブル:<span class="rate">{{calc[2][0]}} %</span></div>
+					      <div class="col">資源定数: <span class="val">{{calc[2][1]}}</span></div>
+					      </div>
+					    <div class="row">
+					      <div class="col">最低テーブル:<span class="rate">{{calc[3][0]}} %</span></div>
+					      <div class="col">資源定数: <span class="val">{{calc[3][1]}}</span></div>
+					    </div>
+					    <div class="row">
+					    	<div class="col">エントリ: <span class="val">{{calc[4][0]}}</span> ～ <span class="val">{{calc[4][1]}}</span></div>
+					    </div>
+				    </div>
+					  <div id="table_chart">
+					  </div>
 				  </div>
 				</div>
-			</div>
 
-	    <hr>
-	    <div class="flex">
-    		<div>
-			    <div class="row">
-			    	<div>太鳳テーブル:<span class="rate">{{calc[0][0]}} %</span></div>
-			    	<div>資源定数: <span class="val">{{calc[0][1]}}</span></div>
-			    </div>
-			    <div class="row">
-			      <div>武蔵テーブル:<span class="rate">{{calc[1][0]}} %</span></div>
-			      <div>資源定数: <span class="val">{{calc[1][1]}}</span></div>
-			    </div>
-			    <div class="row">
-			      <div>大和テーブル:<span class="rate">{{calc[2][0]}} %</span></div>
-			      <div>資源定数: <span class="val">{{calc[2][1]}}</span></div>
-			      </div>
-			    <div class="row">
-			      <div>最低テーブル:<span class="rate">{{calc[3][0]}} %</span></div>
-			      <div>資源定数: <span class="val">{{calc[3][1]}}</span></div>
-			    </div>
-			    <div class="row">
-			    	<div>エントリ: <span class="val">{{calc[4][0]}}</span> ～ <span class="val">{{calc[4][1]}}</span></div>
-			    </div>
-		    </div>
-			  <div id="table_chart">
-			  </div>
+		    <hr>
+
+			　<p>これ以降は<strong><a href="https://twitter.com/KanColle_STAFF/status/1525067471786758144">大和建造率上昇</a>等テーブル自体が変わってたり、ブラウザ版と確実に違ってるので参考程度にしてください</strong></p>
+
+			  <label>ビスマルク建造</label>	
+			  <div class="switch">
+			  	<label>	
+			  		Off	
+			  		<input type="checkbox" v-model="ship_change">		
+			  		<span class="lever"></span>	
+			  		On	
+			  	</label>	
+			  </div>	
+
+			  <table class="result striped highlight">
+			  	<thead>
+			  		<tr><th>艦</th><th>建造率</th><th>燃料</th><th>弾薬</th><th>鋼材</th><th>ボーキ</th><th>開発資材</th></tr>	
+			  	</thead>
+			  	<tbody>
+				    <tr v-for="(row, rowIndex) in calc[5]" :key="rowIndex">
+				      <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
+				    </tr>
+				  </tbody>
+			  </table>
 		  </div>
 
-	    <hr>
+		  <hr>
+		  <p>変更履歴</p>
+		  <ul>
+			  <li>2023.08.30 機能追加：資源効率参考表示</li>
+			  <li>2023.08.07 機能追加：ビスマルク建造に対応 (あくまで改の置換テーブル)</li>
+			  <li>2023.08.07 バグ修正：分母1個分確率が高く出ていたのを修正</li>
+			  <li>2023.08.05 要望対応：メモ機能追加</li>
+			  <li>2023.08.04 ロジックもリポジトリベースに修正 (0番に当たらなくなったので1%程度下がった)</li>
+			  <li>2023.08.02 釘計算をリポジトリベースに修正(釘だけ空母テーブル以外も空母テーブルの計算になっていた) / 個別ドロップ参考表示追加</li>
+			  <li>2023.08.01 ブログを参考にした初期バージョンリリース</li>
+			</ul>
 
-		　<p>これ以降は<strong><a href="https://twitter.com/KanColle_STAFF/status/1525067471786758144">大和建造率上昇</a>等テーブル自体が変わってたり、ブラウザ版と確実に違ってるので参考程度にしてください</strong></p>
-
-		  <table class="result">
-		  	<thead>
-		  		<tr><th>艦</th><th>建造率</th><th>燃料</th><th>弾薬</th><th>鋼材</th><th>ボーキ</th><th>開発資材</th></tr>	
-		  	</thead>
-		  	<tbody>
-			    <tr v-for="(row, rowIndex) in calc[5]" :key="rowIndex">
-			      <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
-			    </tr>
-			  </tbody>
-		  </table>
-	  </div>
-
-	  <hr>
-	  <p>変更履歴</p>
-	  <ul>
-		  <li>2023.08.30 機能追加：資源効率参考表示</li>
-		  <li>2023.08.07 機能追加：ビスマルク建造に対応 (あくまで改の置換テーブル)</li>
-		  <li>2023.08.07 バグ修正：分母1個分確率が高く出ていたのを修正</li>
-		  <li>2023.08.05 要望対応：メモ機能追加</li>
-		  <li>2023.08.04 ロジックもリポジトリベースに修正 (0番に当たらなくなったので1%程度下がった)</li>
-		  <li>2023.08.02 釘計算をリポジトリベースに修正(釘だけ空母テーブル以外も空母テーブルの計算になっていた) / 個別ドロップ参考表示追加</li>
-		  <li>2023.08.01 ブログを参考にした初期バージョンリリース</li>
-		</ul>
-
-		<p>質問、要望、ミス指摘等　なにかあれば <a href="https://twitter.com/mixberryparfait">@mixberryparfait</a> まで</p>
-
+			<p>質問、要望、ミス指摘等　なにかあれば <a href="https://twitter.com/mixberryparfait">@mixberryparfait</a> まで</p>
+		</div>
 	</body>
 </html>
